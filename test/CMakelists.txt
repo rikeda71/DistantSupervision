@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 3.10)
+include(GoogleTest)
+
+file(GLOB SRC_FILES ${PROJECT_SOURCE_DIR}/src/**/*.cc)
+file(GLOB TEST_SRC_FILES ${PROJECT_SOURCE_DIR}/test/*.cc)
+add_executable(TestKnowledgeBase ${TEST_SRC_FILES} ${SRC_FILES})
+
+# add_executable(TestKnowledgeBase test_knowledge_base.cc)
+include_directories(TestKnowledgeBase KnowledgeBase ${GTEST_INCLUDE_PATH})
+
+add_dependencies(TestKnowledgeBase
+    googletest
+)
+
+add_test(test1 TestKnowledgeBase)
+# gtest_add_tests(TARGET TestKnowledgeBase)
