@@ -22,7 +22,7 @@ jobs:
             cd build
             cmake ..
             make
-            ctest
+            ctest -V
       - run:
           name: confirm code style
           command: |

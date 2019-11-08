@@ -1,0 +1,4 @@
+Obama   PER
+Trump   PER
+Hawaii  LOC
+NewYork LOC

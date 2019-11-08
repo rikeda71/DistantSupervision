@@ -14,10 +14,11 @@ class TestKnowledgeBase : public ::testing::Test {
   }
 
   virtual void SetUp() {
-    const std::string inf = "text_i.txt";
-    const std::string outf = "text_i.txt";
-    klbn = new knowledge_base::KnowledgeBaseNER(inf, outf, '\t');
-    klbr = new knowledge_base::KnowledgeBaseRE(inf, outf, '\t');
+    const std::string infn = "../../test/test_i_NER.txt";
+    const std::string infr = "../../test/test_i_RE.txt";
+    const std::string outf = "../../test/text_o.txt";
+    klbn = new knowledge_base::KnowledgeBaseNER(infn, outf, ' ');
+    klbr = new knowledge_base::KnowledgeBaseRE(infr, outf, ' ');
     klbn->load();
     klbr->load();
   }
