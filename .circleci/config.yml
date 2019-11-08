@@ -2,26 +2,28 @@ version: 2.0
 jobs:
   build:
     docker:
-    - image: "ubuntu:18.04"
-  steps:
-    - checkout
+    - image: "circleci/python:latest"
 
-    - run:
-        name: install dependencies
-        command: |
-          apt update
-          apt install -y gcc g++ cmake
-          pip install -U pip
-          pip install cpplint
-    - run:
-        name: build and test
-        command: |
-          cd cmake
-          cmake ..
-          make
-          ctest
-    - run:
-        name: confirm style
-        command: |
-          cpplint */*.cc
-          cpplint */*.hh
+    working_directory: ~/work
+
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            sudo apt update
+            sudo apt install -y gcc g++ cmake
+            sudo pip install -U pip
+            sudo pip install cpplint
+      - run:
+          name: build and test
+          command: |
+            cd cmake
+            cmake ..
+            make
+            ctest
+      - run:
+          name: confirm code style
+          command: |
+            cpplint */*.cc
+            cpplint */*.hh
