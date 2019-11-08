@@ -4,7 +4,8 @@ jobs:
     docker:
     - image: "ubuntu:18.04"
   steps:
-    -checkout
+    - checkout
+
     - run:
         name: install dependencies
         command: |
