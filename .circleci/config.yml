@@ -18,12 +18,8 @@ jobs:
       - run:
           name: build and test
           command: |
-            ls
-            pwd
             mkdir build
             cd build
-            ls
-            pwd
             cmake ..
             make
             ctest
