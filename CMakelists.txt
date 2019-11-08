@@ -1,62 +1,29 @@
-cmake_minimum_required(VERSION 3.10)
-project(DistantSupervision)
-set(CMAKE_CXX_FLAGS "-O2 -std=c++11 -Wall")
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
+project(DistantSupervision CXX)
+set(CMAKE_CXX_FLAGS "-O2 -std=c++11 -Wall -pthread")
 if(APPLE)
-    set(CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS} -undefined dynamic_lookup")
+    set(CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS} -undefined dynamic_lookup")
 endif(APPLE)
 
-include(${PROJECT_SOURCE_DIR}/cmake/DownloadProject/DownloadProject.cmake)
-include(ExternalProject)
+# place binaries and libraries according to GNU standards
+include(GNUInstallDirs)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
 
-# find `threads package`
-find_package(Threads REQUIRED)
-
-# build directory
-set(GTEST_BUILD_DIR ${CMAKE_BINARY_DIR}/gtest)
-# install directory
-set(GTEST_INSTALL_DIR ${CMAKE_BINARY_DIR}/gtest)
-# include directory
-set(GTEST_INCLUDE_DIR ${GTEST_INSTALL_DIR}/include)
-# lib directory
-set(GTEST_LIB_DIR ${GTEST_INSTALL_DIR}/lib)
-
-ExternalProject_add(googletest
-  GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG master
-  PREFIX            ${GTEST_BUILD_DIR}
-  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${GTEST_INSTALL_DIR}
-)
-
-add_library(gtest IMPORTED STATIC GLOBAL)
-set_target_properties(gtest PROPERTIES
-    IMPORTED_LOCATION ${GTEST_LIB_DIR}/libgtest.a
-    INTERFACE_LINK_LIBRARIES Threads::Threads
-)
-
-ExternalProject_Get_Property(googletest source_dir)
-set(GTEST_INCLUDE_PATH ${source_dir}/googletest/include)
-# set(GMOCK_INCLUDE_PATH ${source_dir}/googlemock/include)
-# include_directories(${source_dir}/googletest/include)
-# ExternalProject_Get_Property(googletest binary_dir)
-# set(GTEST_LIBRARY_PATH ${binary_dir}/googlemock/gtest/${CMAKE_FIND_LIBRARY_PREFIXES}gtest.a)
-# set(GTEST_LIBRARY GTest::GTest)
-# add_library(${GTEST_LIBRARY} IMPORTED STATIC GLOBAL)
-#
-# set_target_properties(${GTEST_LIBRARY} PROPERTIES
-#     IMPORTED_LOCATION ${GTEST_LIBRARY_PATH}
-#     INTERFACE_LINK_LIBRARIES Threads::Threads)
-# add_dependencies(${GTEST_LIBRARY} googletest)
-#
-# set(GMOCK_LIBRARY_PATH ${binary_dir}/googlemock/${CMAKE_FIND_LIBRARY_PREFIXES}gmock.a)
-# set(GMOCK_LIBRARY GTest::GMock)
-# add_library(${GMOCK_LIBRARY} UNKNOWN IMPORTED)
-# set_target_properties(${GMOCK_LIBRARY} PROPERTIES
-#   IMPORTED_LOCATION ${GMOCK_LIBRARY_PATH}
-#   INTERFACE_LINK_LIBRARIES Threads::Threads)
-# add_dependencies(${GMOCK_LIBRARY} googletest)
+# we use this to get code coverage
+if(CMAKE_CXX_COMPILER_ID MATCHES GNU)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+endif()
 
 add_subdirectory(src)
+
+include(cmake/googletest.cmake)
+fetch_googletest(
+    ${PROJECT_SOURCE_DIR}/cmake
+    ${PROJECT_BINARY_DIR}/googletest
+    )
+
 enable_testing()
 add_subdirectory(test)
-# add_subdirectory(GoogleTest)
