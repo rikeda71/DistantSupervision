@@ -1,0 +1,26 @@
+version: 2.0
+jobs:
+  build:
+    docker:
+    - image: "ubuntu:18.04"
+  steps:
+    -checkout
+    - run:
+        name: install dependencies
+        command: |
+          apt update
+          apt install -y gcc g++ cmake
+          pip install -U pip
+          pip install cpplint
+    - run:
+        name: build and test
+        command: |
+          cd cmake
+          cmake ..
+          make
+          ctest
+    - run:
+        name: confirm style
+        command: |
+          cpplint */*.cc
+          cpplint */*.hh
